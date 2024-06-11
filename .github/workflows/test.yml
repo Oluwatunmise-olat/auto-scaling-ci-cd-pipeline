@@ -9,6 +9,8 @@ on:
 jobs:
   quick-test:
     runs-on: ubuntu-latest
+    env:
+      BUILD_CMD: ${{ secrets.BUILD_CMD }}
 
     steps:
       - name: Checkout code
@@ -18,4 +20,4 @@ jobs:
         run: printenv
 
       - name: Echo Env
-        run: echo "${{ secrets.BUILD_CMD }}"
+        run: echo "$BUILD_CMD"
