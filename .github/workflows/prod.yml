@@ -1,0 +1,30 @@
+---
+name: Create Launch Template Version and Start Instance Refresh on Auto Scaling Group
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  update-launch-template:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Update Launch Template
+        run: |
+          aws ec2 create-launch-template-version --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} --source-version <existing-version> --user-data $(pwd)/scripts/userdata.sh
+
+      - name: Trigger ASG Instance Refresh
+        run: |
+          aws autoscaling start-instance-refresh --auto-scaling-group-name ${{ secrets.AUTO_SCALING_GROUP_NAME }} --preferences '{"InstanceWarmup":60}'
