@@ -11,7 +11,7 @@
 On new deploy
 
 - Update Launch Template (This creates a new template version)
-- Delete Old Template but leave the last 2
+- Delete Old Template but leave the last 2 (use EventBridge)
 - Start instance refresh on ASG
 
 For Envs Use Parameter Store
