@@ -2,6 +2,8 @@
 
 chmod +x .
 
+function loadEnvFromParameterGroupAndSetOnEc2() {}
+
 NODE_VERSION="18.0.0"
 DEPLOYMENT_BRANCH=${DEPLOYMENT_BRANCH}
 
