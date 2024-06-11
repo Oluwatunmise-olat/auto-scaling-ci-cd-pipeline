@@ -16,3 +16,6 @@ jobs:
 
       - name: Read Envs
         run: printenv
+
+      - name: Echo Env
+        run: echo "${{ secrets.BUILD_CMD }}"
