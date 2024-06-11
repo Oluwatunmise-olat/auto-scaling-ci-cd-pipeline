@@ -23,7 +23,7 @@ jobs:
 
       - name: Update Launch Template
         run: |
-          aws ec2 create-launch-template-version --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} --source-version <existing-version> --user-data $(pwd)/scripts/userdata.sh
+          aws ec2 create-launch-template-version --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} --user-data $(pwd)/scripts/userdata.sh
 
       - name: Trigger ASG Instance Refresh
         run: |
