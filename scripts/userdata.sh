@@ -2,6 +2,7 @@
 
 chmod +x .
 
+# create .env
 function loadEnvFromParameterGroupAndSetOnEc2() {}
 
 NODE_VERSION="18.0.0"
@@ -41,6 +42,7 @@ function pullApplicationCodeFromGithubAndStartUp() {
   pm2 start yarn --name=${APP_NAME} --restart-delay=5000 -- start #5 seconds
 }
 
+loadEnvFromParameterGroupAndSetOnEc2 &> /dev/null
 updateAndInstallPackegesForAmazonLinux &> /dev/null
 installNodeVersionManager &> /dev/null
 pullApplicationCodeFromGithubAndStartUp

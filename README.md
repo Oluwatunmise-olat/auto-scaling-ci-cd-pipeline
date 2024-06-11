@@ -1,5 +1,6 @@
 #### Thought Process
 
+- Create Instance Role For Parameter Store
 - Create Base EC2 Instance
 - Create AMI from instance
 - Terminate base instance

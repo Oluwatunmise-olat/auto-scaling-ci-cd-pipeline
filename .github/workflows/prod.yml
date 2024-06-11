@@ -27,7 +27,14 @@ jobs:
 
       - name: Update Launch Template
         run: |
-          aws ec2 create-launch-template-version --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} --user-data $(pwd)/scripts/userdata.sh
+          aws ec2 create-launch-template-version \
+          --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
+          --launch-template-data "{
+            \"UserData\": \"fileb://$(pwd)/scripts/userdata.sh\",
+            \"IamInstanceProfile\": {
+              \"Arn\": \"${{ secrets.EC2_PARAMETER_STORE_INSTANCE_PROFILE_ARN }}\"
+            }
+          }"
 
       - name: Trigger ASG Instance Refresh
         run: |
