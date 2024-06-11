@@ -12,12 +12,7 @@
 		"knex": "ts-node -r dotenv/config ./node_modules/knex/bin/cli.js",
 		"db:migrate:make": "npm run knex -- migrate:make",
 		"db:migrate": "npm run knex -- migrate:latest --knexfile ./knexfile.ts",
-		"db:migrate:rollback": "npm run knex -- migrate:rollback",
-		"test": "jest --forceExit --no-cache --runInBand",
-		"pre-test": "/bin/bash ./pre-test-script.sh",
-		"post-test": "/bin/bash ./post-test-script.sh",
-		"test:watch": "jest --watch",
-		"test:cov": "jest --coverage"
+		"db:migrate:rollback": "npm run knex -- migrate:rollback"
 	},
 	"dependencies": {
 		"@withshepherd/faker": "^5.5.5",
@@ -85,36 +80,5 @@
 			"src/**/*.spec.ts"
 		],
 		"exec": "./node_modules/.bin/ts-node --files -r tsconfig-paths/register ./src"
-	},
-	"jest": {
-		"moduleFileExtensions": [
-			"js",
-			"json",
-			"ts"
-		],
-		"rootDir": "src",
-		"testRegex": ".*\\.spec\\.ts$",
-		"transform": {
-			"^.+\\.(t|j)s$": "ts-jest"
-		},
-		"collectCoverageFrom": [
-			"**/*.(t|j)s"
-		],
-		"coverageDirectory": "../coverage",
-		"testEnvironment": "node",
-		"setupFilesAfterEnv": [
-			"../jest.setup.ts"
-		],
-		"testTimeout": 100000,
-		"moduleNameMapper": {
-			"^@app/(.*)$": "<rootDir>/$1",
-			"^@config/(.*)$": "<rootDir>/config/$1",
-			"^@db/(.*)$": "<rootDir>/db/$1",
-			"^@middlewares/(.*)$": "<rootDir>/middlewares/$1",
-			"^@models/(.*)$": "<rootDir>/models/$1",
-			"^@modules/(.*)$": "<rootDir>/modules/$1",
-			"^@repositories/(.*)$": "<rootDir>/repositories/$1",
-			"^@shared/(.*)$": "<rootDir>/shared/$1"
-		}
 	}
 }
