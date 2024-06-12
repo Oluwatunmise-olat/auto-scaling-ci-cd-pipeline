@@ -5,7 +5,7 @@ chmod +x .
 REGION=$(TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` &> /dev/null && curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/region)
 
 function loadEnvFromParameterGroupAndSetOnEc2() {
-  DATA=$(aws ssm get-parameters-by-path --path=/app/staging --region=$REGION--with-decryption)
+  DATA=$(aws ssm get-parameters-by-path --path=/app/staging --region=$REGION --with-decryption)
   DATA=$(echo $DATA | jq -r '.Parameters | map({Name, Value})')
 
   readarray -t DATA < <(echo $DATA | jq -c '.[]')
@@ -18,7 +18,7 @@ function loadEnvFromParameterGroupAndSetOnEc2() {
   done
 }
 
-NODE_VERSION="18.0.0"
+NODE_VERSION="18.18.0"
 DEPLOYMENT_BRANCH=${DEPLOYMENT_BRANCH}
 
 function updateAndInstallPackegesForAmazonLinux() {
@@ -42,17 +42,18 @@ function installNodeVersionManager() {
 function pullApplicationCodeFromGithubAndStartUp() {
   mkdir -p app && cd app;
 
-  git clone https://${GIT_USERNAME}:${GIT_TOKEN}@${GIT_REPOSITORY} . &> /dev/null;
-  git pull https://${GIT_USERNAME}:${GIT_TOKEN}@${GIT_REPOSITORY} ${DEPLOYMENT_BRANCH} &> /dev/null;
+  git clone https://"$GIT_USERNAME":"$GIT_TOKEN"@"$GIT_REPOSITORY" . &> /dev/null;
+  git pull https://"$GIT_USERNAME":"$GIT_TOKEN"@"$GIT_REPOSITORY" "$DEPLOYMENT_BRANCH" &> /dev/null;
 
   npm install -g yarn
+  npm install -g typescript
+  npm install -g pm2
   yarn install
-  yarn global add pm2
 
-  ${BUIL_D_CMD}
+  $BUILD_CMD
 
   # For quicker instance restarts if an uncaught error occurs instead of replacing the whole instance
-  pm2 start yarn --name=${APP_NAME} --restart-delay=5000 -- start #5 seconds
+  pm2 start yarn --name=$APP_NAME --restart-delay=5000 -- start #5 seconds
 }
 
 loadEnvFromParameterGroupAndSetOnEc2 &> /dev/null && source ~/.bashrc

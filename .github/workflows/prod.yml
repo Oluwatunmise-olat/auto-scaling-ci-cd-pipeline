@@ -29,13 +29,8 @@ jobs:
         run: |
           aws ec2 create-launch-template-version \
           --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
-          --launch-template-data "{
-            \"UserData\": \"fileb://$(pwd)/scripts/userdata.sh\",
-            \"IamInstanceProfile\": {
-              \"Arn\": \"${{ secrets.EC2_PARAMETER_STORE_INSTANCE_PROFILE_ARN }}\"
-            }
-          }"
+          --source-version 1
 
       - name: Trigger ASG Instance Refresh
         run: |
-          aws autoscaling start-instance-refresh --auto-scaling-group-name ${{ secrets.AUTO_SCALING_GROUP_NAME }} --preferences '{"InstanceWarmup":60}'
+          aws autoscaling start-instance-refresh --auto-scaling-group-name ${{ secrets.AUTO_SCALING_GROUP_NAME }} --preferences '{"InstanceWarmup":60, "MinHealthyPercentage":90}'
