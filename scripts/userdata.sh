@@ -4,9 +4,6 @@ chmod +x .
 
 REGION=$(TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` &> /dev/null && curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/region)
 
-echo $REGION
-
-# create .env
 function loadEnvFromParameterGroupAndSetOnEc2() {
   DATA=$(aws ssm get-parameters-by-path --path=/app/staging --region=$REGION--with-decryption)
   DATA=$(echo $DATA | jq -r '.Parameters | map({Name, Value})')
@@ -19,8 +16,6 @@ function loadEnvFromParameterGroupAndSetOnEc2() {
 
     echo "export $name=\"$value\"" >> ~/.bashrc
   done
-
-  source ~/.bashrc
 }
 
 NODE_VERSION="18.0.0"
@@ -60,7 +55,7 @@ function pullApplicationCodeFromGithubAndStartUp() {
   pm2 start yarn --name=${APP_NAME} --restart-delay=5000 -- start #5 seconds
 }
 
-loadEnvFromParameterGroupAndSetOnEc2 &> /dev/null
+loadEnvFromParameterGroupAndSetOnEc2 &> /dev/null && source ~/.bashrc
 updateAndInstallPackegesForAmazonLinux &> /dev/null
 installNodeVersionManager &> /dev/null
 pullApplicationCodeFromGithubAndStartUp
