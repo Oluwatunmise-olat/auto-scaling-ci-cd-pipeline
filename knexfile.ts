@@ -2,8 +2,6 @@ import type { Knex } from 'knex'
 
 import { databaseConfig as db } from './src/config/db.config'
 
-console.log(db, 'DEBUG')
-
 const knexConfig = {
 	client: db.driver_client,
 	connection: {
