@@ -45,9 +45,7 @@ function pullApplicationCodeFromGithubAndStartUp() {
   git clone https://"$GIT_USERNAME":"$GIT_TOKEN"@"$GIT_REPOSITORY" . &> /dev/null;
   git pull https://"$GIT_USERNAME":"$GIT_TOKEN"@"$GIT_REPOSITORY" "$DEPLOYMENT_BRANCH" &> /dev/null;
 
-  npm install -g yarn
-  npm install -g typescript
-  npm install -g pm2
+  npm install -g yarn typescript pm2
   yarn install
 
   $BUILD_CMD
