@@ -22,12 +22,12 @@ NODE_VERSION="18.18.0"
 DEPLOYMENT_BRANCH=${DEPLOYMENT_BRANCH}
 
 function updateAndInstallPackegesForAmazonLinux() {
-  sudo yum update;
+  sudo yum update -y;
   sudo yum install -y httpd git;
 }
 
 function installNodeVersionManager() {
-  cd /tmp/node-version-manager;
+  mkdir -p /tmp/node-version-manager && cd /tmp/node-version-manager;
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash;
 
   export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
@@ -40,7 +40,7 @@ function installNodeVersionManager() {
 }
 
 function pullApplicationCodeFromGithubAndStartUp() {
-  mkdir -p app && cd app;
+  mkdir -p ~/app && cd ~/app;
 
   git clone https://"$GIT_USERNAME":"$GIT_TOKEN"@"$GIT_REPOSITORY" . &> /dev/null;
   git pull https://"$GIT_USERNAME":"$GIT_TOKEN"@"$GIT_REPOSITORY" "$DEPLOYMENT_BRANCH" &> /dev/null;
