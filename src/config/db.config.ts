@@ -7,7 +7,7 @@ export const databaseConfig = {
 		database: process.env.MYSQL_DB_NAME as string,
 		user: process.env.MYSQL_USER as string,
 		password: process.env.MYSQL_PASSWORD as string,
-		port: process.env.MYSQL_DB_PORT as string,
+		port: Number(process.env.MYSQL_DB_PORT) as number,
 	},
 	pool: {
 		min: parseInt(process.env.DB_POOL_MIN as string) || 2,
