@@ -38,6 +38,7 @@
 		"ts-node": "^10.9.2",
 		"tsyringe": "^4.8.0",
 		"typescript": "^5.4.5",
+		"tsc-alias": "^1.8.10",
 		"uuid": "^9.0.1"
 	},
 	"devDependencies": {

@@ -1,11 +1,14 @@
 #!/bin/bash
-
 chmod +x .
 
-REGION=$(TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` &> /dev/null && curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/region)
+NODE_VERSION="18.18.0"
+
+AWS_METADATA_TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+AWS_VM_REGION=$(curl -H "X-aws-ec2-metadata-token: $AWS_METADATA_TOKEN" http://169.254.169.254/latest/meta-data/placement/region)
+
 
 function loadEnvFromParameterGroupAndSetOnEc2() {
-  DATA=$(aws ssm get-parameters-by-path --path=/app/staging --region=$REGION --with-decryption)
+  DATA=$(aws ssm get-parameters-by-path --path=/app/staging --region=$AWS_VM_REGION --with-decryption)
   DATA=$(echo $DATA | jq -r '.Parameters | map({Name, Value})')
 
   readarray -t DATA < <(echo $DATA | jq -c '.[]')
@@ -14,16 +17,17 @@ function loadEnvFromParameterGroupAndSetOnEc2() {
     name=$(echo $env | jq ".Name" | awk -F'/' '{sub(/"/, "", $NF); print $NF;}')
     value=$(echo $env | jq -r ".Value")
 
+    echo $env
     echo "export $name=\"$value\"" >> ~/.bashrc
   done
 }
 
-NODE_VERSION="18.18.0"
-DEPLOYMENT_BRANCH=${DEPLOYMENT_BRANCH}
 
-function updateAndInstallPackegesForAmazonLinux() {
-  sudo yum update -y;
-  sudo yum install -y httpd git;
+
+function updateAndInstallPackegesForUbuntu() {
+  sudo apt-get update -y;
+  sudo apt-get install -y git python3-pip;
+  sudo rm /usr/lib/python3.*/EXTERNALLY-MANAGED && sudo pip3 install awscli;
 }
 
 function installNodeVersionManager() {
@@ -42,11 +46,12 @@ function installNodeVersionManager() {
 function pullApplicationCodeFromGithubAndStartUp() {
   mkdir -p ~/app && cd ~/app;
 
-  git clone https://"$GIT_USERNAME":"$GIT_TOKEN"@"$GIT_REPOSITORY" . &> /dev/null;
-  git pull https://"$GIT_USERNAME":"$GIT_TOKEN"@"$GIT_REPOSITORY" "$DEPLOYMENT_BRANCH" &> /dev/null;
+  git clone https://"$GIT_USERNAME":"$GIT_TOKEN"@"$GIT_REPOSITORY" .;
+  git checkout "$DEPLOYMENT_BRANCH";
+  git pull https://"$GIT_USERNAME":"$GIT_TOKEN"@"$GIT_REPOSITORY" "$DEPLOYMENT_BRANCH";
 
-  npm install -g yarn typescript pm2
-  yarn install
+  npm install -g yarn typescript pm2;
+  yarn install;
 
   $BUILD_CMD
 
@@ -54,7 +59,7 @@ function pullApplicationCodeFromGithubAndStartUp() {
   pm2 start yarn --name=$APP_NAME --restart-delay=5000 -- start #5 seconds
 }
 
-loadEnvFromParameterGroupAndSetOnEc2 &> /dev/null && source ~/.bashrc
-updateAndInstallPackegesForAmazonLinux &> /dev/null
+updateAndInstallPackegesForUbuntu
+loadEnvFromParameterGroupAndSetOnEc2 && source ~/.bashrc
 installNodeVersionManager &> /dev/null
 pullApplicationCodeFromGithubAndStartUp
