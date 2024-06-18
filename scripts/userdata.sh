@@ -17,7 +17,6 @@ function loadEnvFromParameterGroupAndSetOnEc2() {
     name=$(echo $env | jq ".Name" | awk -F'/' '{sub(/"/, "", $NF); print $NF;}')
     value=$(echo $env | jq -r ".Value")
 
-    echo $env
     echo "export $name=\"$value\"" >> ~/.bashrc
   done
 }
