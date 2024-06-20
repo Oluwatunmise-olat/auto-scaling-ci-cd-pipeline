@@ -1,13 +1,10 @@
 #### Thought Process
 
-- Create Instance Role For Parameter Store
-- Create Base EC2 Instance
-- Create AMI from instance
-- Terminate base instance
 - Create Launch Template
-- Create Target Group
-- Create Load Balancer
-- Create Auto Scaling Group (Let it use latest Launch Template Version)
+- Add app script in user data of launch template for setting up your application
+- Create target group to route requests to the port your app is listening on
+- Create Application Load Balancer to listen to requests on port 80 and route to your target group
+- Create auto scaling group (Let it use latest Launch Template Version)
 
 On new deploy
 

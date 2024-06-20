@@ -34,5 +34,3 @@ jobs:
       - name: Trigger ASG Instance Refresh
         run: |
           aws autoscaling start-instance-refresh --auto-scaling-group-name ${{ secrets.AUTO_SCALING_GROUP_NAME }} --preferences '{"InstanceWarmup":60, "MinHealthyPercentage":90}'
-
-# Add Life Cycle Hook for ALB
