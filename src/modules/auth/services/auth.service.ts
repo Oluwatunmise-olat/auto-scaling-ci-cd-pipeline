@@ -14,8 +14,6 @@ export class AuthService {
 
 	public async signup(payload: AccountCreationDto): Promise<ServiceResponse> {
 		try {
-			console.log(process.env)
-
 			const userExist = await this.userRepository.emailOrPhoneExist(payload.email, payload.phone)
 
 			if (userExist) return { status: false, message: 'Email Or Phone Number already in use!', data: null }
