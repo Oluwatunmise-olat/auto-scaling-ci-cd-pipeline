@@ -4,7 +4,7 @@ name: Create Launch Template Version and Start Instance Refresh on Auto Scaling 
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   update-launch-template:
